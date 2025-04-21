@@ -1,0 +1,19 @@
+﻿/* SwetKill- style.css */
+/* 版本號: 0.001 */
+
+body {
+    margin: 0; /* 移除 body 預設的外邊距 */
+    display: flex; /* 使用 Flexbox 佈局 */
+    justify-content: center; /* 水平居中內容 */
+    align-items: center; /* 垂直居中內容 */
+    min-height: 100vh; /* 確保 body 至少佔據整個 viewport 的高度 */
+    background-color: #f0f0f0; /* 設定一個淺灰色背景 */
+}
+
+#gameCanvas {
+    border: 1px solid black; /* 給 Canvas 一個黑色的邊框，方便觀察 */
+    background-color: #ffffff; /* 設定 Canvas 的背景為白色 */
+    /* 你可以根據你的遊戲風格調整寬度和高度 */
+    width: 80%;
+    height:  80%;
+}
