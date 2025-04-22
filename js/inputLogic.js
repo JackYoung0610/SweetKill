@@ -3,14 +3,11 @@
 import { init_central } from '../main.js';
 
 import { gameStates } from './gameState.js';
-import { isInsideRectangle } from './utils.js';
+import { setHighScore, isInsideRectangle } from './utils.js';
 
 //處理按下鍵盤
 export function procKeyDown(ctx, gameCanvas, event) {
     
-    console.log('Debug: procKeyDown event.code)' , event.code);
-    console.log(`Debug: procClick gameStates.currentGameState = ${gameStates.currentGameState}  :)`);
-
     // 根據目前的遊戲階段執行不同的邏輯
     switch (gameStates.currentGameState) {
         case 'mainMenu':
@@ -87,8 +84,6 @@ export function procKeyDown(ctx, gameCanvas, event) {
 //處理放開鍵盤
 export function procKeyUp(ctx, gameCanvas, event) {
 
-    //console.log('Debug: procKeyUp event.code)' , event.code);
-
      // 根據目前的遊戲階段執行不同的邏輯
     switch (gameStates.currentGameState) {
         case 'mainMenu':
@@ -124,9 +119,6 @@ export function procKeyUp(ctx, gameCanvas, event) {
 //處理點擊效果
 export function procClick(ctx, gameCanvas, x, y) {
     
-    console.log(`Debug: gameStates.currentGameState : )`,gameStates.currentGameState);
-    console.log(`Debug: procClick x = ${x} , y = ${y} :)`);
-
     // 根據目前的遊戲階段執行不同的邏輯
     switch (gameStates.currentGameState) {
         case 'mainMenu':
@@ -243,8 +235,6 @@ function startGameTimer() {
 
 //將最高分清除為0
 function clearHighScore() {
-
-        localStorage.setItem('highScore', 0);
+        setHighScore(0);
         init_central( {bInitGameStates : true });
-
 }

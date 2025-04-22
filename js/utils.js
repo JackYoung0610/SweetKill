@@ -1,5 +1,7 @@
 ﻿// ..js/utils.js
 
+import {  HIGHSCORE } from './constants.js';
+
 // =========================
 // 分數管理相關函式
 // =========================
@@ -10,7 +12,7 @@
  */
 export function getHighScore() {
     try {
-        const storedHighScore = localStorage.getItem('highScore');
+        const storedHighScore = localStorage.getItem(HIGHSCORE);
         return storedHighScore ? parseInt(storedHighScore) : 0;
     } catch (error) {
         console.error('Error accessing localStorage for highScore:', error);
@@ -24,7 +26,7 @@ export function getHighScore() {
  */
 export function setHighScore(score) {
     try {
-        localStorage.setItem('highScore', score);
+        localStorage.setItem(HIGHSCORE, score);
     } catch (error) {
         console.error('Error saving highScore to localStorage:', error);
     }
@@ -63,7 +65,6 @@ export function calculateButtonArea(ctx, x, y, text, paddingX = 30, paddingY = 1
  * @returns {boolean} 如果點擊在矩形內，返回 true，否則返回 false。
  */
 export function isInsideRectangle(x, y, rect) {
-    console.log(`Debug: isInsideRectangle  rect :)`,rect);
     return x > rect.x && x < rect.x + rect.width && y > rect.y && y < rect.y + rect.height;
 }
 

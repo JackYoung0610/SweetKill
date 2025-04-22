@@ -13,7 +13,5 @@ body {
 #gameCanvas {
     border: 1px solid black; /* 給 Canvas 一個黑色的邊框，方便觀察 */
     background-color: #ffffff; /* 設定 Canvas 的背景為白色 */
-    /* 你可以根據你的遊戲風格調整寬度和高度 */
-    width: 80%;
-    height:  80%;
+
 }

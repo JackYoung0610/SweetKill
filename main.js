@@ -1,12 +1,12 @@
 ﻿// SweetKill - main.js
 // 版本號: 0.001
-export const gameVersion = 'v 0.001'
+export const gameVersion = 'v 0.002'
 
-import { resolutionScaleX, resolutionScaleY } from './js/constants.js';
+import { gameDisplay } from './js/constants.js';
 import { gameStates, } from './js/gameState.js';
-import { drawGamePhase_mainMenu, rawGamePhase_toolSelection, rawGamePhase_playing, rawGamePhase_gameOver} from './js/drawing.js';
+import { drawGamePhase_mainMenu, drawGamePhase_toolSelection, drawGamePhase_playing, drawGamePhase_gameOver} from './js/drawing.js';
 import { addEventListeners, removeEventListeners } from './js/eventHandlers.js';
-import { getHighScore,  calculateButtonArea } from './js/utils.js';
+import { getHighScore,  setHighScore, calculateButtonArea } from './js/utils.js';
 
 export {  init_central };
 
@@ -46,9 +46,20 @@ function init_central(options = {}) {
 
 // 初始化 遊戲畫布
 function init_gameCanvas() {
+
     // 設定 gameCanvas 的寬度與高度
-    gameCanvas.width = window.innerWidth * resolutionScaleX;
-    gameCanvas.height = window.innerHeight * resolutionScaleY;
+    gameCanvas.width = window.innerWidth * gameDisplay.resolutionScaleX;
+    gameCanvas.height = window.innerHeight * gameDisplay.resolutionScaleY;
+
+
+    gameDisplay.scaleX = gameCanvas.width / gameDisplay.BASE_WIDTH;
+    gameDisplay.scaleY = gameCanvas.height / gameDisplay.BASE_HEIGHT;
+
+
+    console.log(`Debug: init_gameCanvas window x = ${window.innerWidth} , y = ${window.innerHeight} :)`);
+    console.log(`Debug: init_gameCanvas gameCanvas x = ${gameCanvas.width} , y = ${gameCanvas.height} :)`);
+    console.log(`Debug: init_gameCanvas x = ${gameDisplay.scaleX} , y = ${gameDisplay.scaleY} :)`);
+
 }
 
 // 初始化 遊戲狀態
@@ -83,18 +94,19 @@ function update() {
 
         case 'toolSelection':
 
-            rawGamePhase_toolSelection(ctx, gameCanvas);
+            drawGamePhase_toolSelection(ctx, gameCanvas);
     
             requestAnimationFrame(update);
 
             return;
 
         case 'playing':
+
              // 更新遊戲邏輯
             //updateGameLogic(ctx, gameCanvas);
 
             // 繪製遊戲畫面
-            rawGamePhase_playing(ctx, gameCanvas);
+            drawGamePhase_playing(ctx, gameCanvas);
     
             requestAnimationFrame(update);
 
@@ -102,7 +114,7 @@ function update() {
 
         case 'gameOver':
 
-            rawGamePhase_gameOver(ctx, gameCanvas);
+            drawGamePhase_gameOver(ctx, gameCanvas);
 
             requestAnimationFrame(update);
 
