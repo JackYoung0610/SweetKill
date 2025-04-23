@@ -6,8 +6,8 @@ export const HIGHSCORE = 'SweetKillHighScore';
 //遊戲畫面縮放率
 export const gameDisplay ={
 
-    BASE_WIDTH : 1920,
-    BASE_HEIGHT : 1080,
+    BASE_WIDTH : 800,
+    BASE_HEIGHT : 600,
 
     resolutionScaleX : 0.9,
     resolutionScaleY : 0.9,

@@ -5,6 +5,21 @@ import {  gameDisplay, STYLES } from './constants.js';
 import { gameStates } from './gameState.js';
 import { calculateButtonArea } from './utils.js';
 
+import { SPRITE_SHEET } from './spriteSheet.js';
+import SpriteAnimator from './spriteAnimator.js';
+import animationManager from './animationManager.js';
+
+/*
+const mainMenuTitleAnimator = new SpriteAnimator(
+    SPRITE_SHEET.mainMenu[0].imageSrc,
+    SPRITE_SHEET.mainMenu[0].frameWidth,
+    SPRITE_SHEET.mainMenu[0].frameHeight,
+    SPRITE_SHEET.mainMenu[0].framesPerRow,
+    SPRITE_SHEET.mainMenu[0].animationSpeed,
+    SPRITE_SHEET.mainMenu[0].scale
+);
+*/
+
 /**
  * 繪製文字。
  * @param {CanvasRenderingContext2D} ctx - Canvas 2D 繪圖上下文。
@@ -40,7 +55,6 @@ export function drawText(ctx, text, originalX, originalY, options = {},  shouldS
 
 }
 
-
 /**
  * 繪製矩形。
  * @param {CanvasRenderingContext2D} ctx - Canvas 2D 繪圖上下文。
@@ -49,16 +63,18 @@ export function drawText(ctx, text, originalX, originalY, options = {},  shouldS
  * @param {number} originalWidth - 矩形的寬度。
  * @param {number} originalHeight - 矩形的高度。
  * @param {Object} options - 繪製選項（填充顏色、邊框顏色等）。
+    * @param {boolean} shouldScale - 是否根據遊戲顯示比例縮放。
+    * @param {boolean} shouldScaleSize - 是否根據遊戲顯示比例縮放大小。
  */
-export function drawRectangle(ctx, originalX, originalY, originalWidth, originalHeight, options = {}, shouldScale = true) {
+export function drawRectangle(ctx, originalX, originalY, originalWidth, originalHeight, options = {}, shouldScale = true, shouldScaleSize = true) {
 
     const { fillColor = 'black', strokeColor = null, lineWidth = 1 } = options;
 
     const scaledX = shouldScale ? originalX * gameDisplay.scaleX : originalX;
     const scaledY = shouldScale ? originalY * gameDisplay.scaleY : originalY;
-    const scaledWidth = shouldScale ? originalWidth * gameDisplay.scaleX : originalWidth;
-    const scaledHeight = shouldScale ? originalHeight * gameDisplay.scaleY : originalHeight;
-    const scaledLineWidth = shouldScale ? lineWidth * Math.min(gameDisplay.scaleX, gameDisplay.scaleY) : lineWidth;
+    const scaledWidth = shouldScaleSize ? originalWidth * gameDisplay.scaleX : originalWidth;
+    const scaledHeight = shouldScaleSize ? originalHeight * gameDisplay.scaleY : originalHeight;
+    const scaledLineWidth = shouldScaleSize ? lineWidth * Math.min(gameDisplay.scaleX, gameDisplay.scaleY) : lineWidth;
 
     if (fillColor) {
         ctx.fillStyle = fillColor;
@@ -79,15 +95,17 @@ export function drawRectangle(ctx, originalX, originalY, originalWidth, original
  * @param {number} y - 圓心的 Y 座標。
  * @param {number} radius - 圓的半徑。
  * @param {Object} options - 繪製選項（填充顏色、邊框顏色等）。
+    * @param {boolean} shouldScale - 是否根據遊戲顯示比例縮放。
+    * @param {boolean} shouldScaleSize - 是否根據遊戲顯示比例縮放大小。
  */
-export function drawCircle(ctx, originalX, originalY, originalRadius, options = {}, shouldScale = true) {
+export function drawCircle(ctx, originalX, originalY, originalRadius, options = {}, shouldScale = true,  shouldScaleSize = true) {
 
     const { fillColor = 'black', strokeColor = null, lineWidth = 1 } = options;
 
     const scaledX = shouldScale ? originalX * gameDisplay.scaleX : originalX;
     const scaledY = shouldScale ? originalY * gameDisplay.scaleY : originalY;
-    const scaledRadius = shouldScale ? originalRadius * Math.min(gameDisplay.scaleX, gameDisplay.scaleY) : originalRadius;
-    const scaledLineWidth = shouldScale ? lineWidth * Math.min(gameDisplay.scaleX, gameDisplay.scaleY) : lineWidth;
+    const scaledRadius = shouldScaleSize ? originalRadius * Math.min(gameDisplay.scaleX, gameDisplay.scaleY) : originalRadius;
+    const scaledLineWidth = shouldScaleSize ? lineWidth * Math.min(gameDisplay.scaleX, gameDisplay.scaleY) : lineWidth;
 
     ctx.beginPath();
     ctx.arc(scaledX, scaledY, scaledRadius, 0, Math.PI * 2);
@@ -105,17 +123,26 @@ export function drawCircle(ctx, originalX, originalY, originalRadius, options = 
     ctx.closePath();
 }
 
-// 繪製主選單畫面
 export function drawGamePhase_mainMenu(ctx, gameCanvas) {
+
 
     // 清除畫布
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     // 繪製背景
-    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(201, 235, 151 , 1)' }, false);
+    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(201, 235, 151 , 1)' }, false, false);
 
     // 繪製遊戲標題
     drawText(ctx, 'Sweet Kill', gameCanvas.width / 2, gameCanvas.height * 0.3, STYLES.text.mainMenu_Title, false,);
+
+    // 繪製遊戲標題 (使用動畫管理器)
+    const titleAnimator = animationManager.getAnimator('mainMenuTitle');
+    if (titleAnimator) {
+        const spriteConfig = titleAnimator.hasOwnProperty('config') ? titleAnimator.config : SPRITE_SHEET.mainMenu[0]; // 確保能獲取配置
+        const spriteX = gameCanvas.width / 2 - (spriteConfig.frameWidth * spriteConfig.scale * gameDisplay.scaleX) / 2;
+        const spriteY = gameCanvas.height * 0.3 - (spriteConfig.frameHeight * spriteConfig.scale * gameDisplay.scaleY) / 2;
+        animationManager.drawAnimator(ctx, 'mainMenuTitle', spriteX, spriteY);
+    }
 
     //繪製最高分
     drawText(ctx, `最高分 : ${gameStates.highScore}`, 30 , 35 , STYLES.text.mainMenu_Status,);
@@ -123,7 +150,7 @@ export function drawGamePhase_mainMenu(ctx, gameCanvas) {
     drawText(ctx, '點擊後開始恩愛', gameCanvas.width / 2, gameCanvas.height * 0.7, STYLES.text.mainMenu_Button,false);
 
     // 繪製版本號
-    drawText(ctx, gameVersion , gameCanvas.width - 50 , gameCanvas.height - 10, STYLES.text.mainMenu_Version,false);
+    drawText(ctx, gameVersion , gameCanvas.width *0.99 , gameCanvas.height * 0.99 , {...STYLES.text.mainMenu_Version , textAlign:'right'},false);
 
 }
 
@@ -138,7 +165,7 @@ export function drawGamePhase_toolSelection(ctx, gameCanvas) {
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     // 繪製背景
-    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(201, 235, 151 , 1)' }, false);
+    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(201, 235, 151 , 1)' }, false, false);
 
     // 繪製遊戲標題
     drawText(ctx, '選擇順手的工具', gameCanvas.width / 2, gameCanvas.height * 0.3, STYLES.text.toolSelection_Title,false );
@@ -156,7 +183,7 @@ export function drawGamePhase_playing(ctx, gameCanvas) {
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     // 繪製背景
-    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(201, 235, 151 , 1)' }, false);
+    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(201, 235, 151 , 1)' }, false, false);
 
     // 繪製遊戲標題
     drawText(ctx, '遊戲中…', gameCanvas.width / 2, gameCanvas.height * 0.3, STYLES.text.playing_Title, false);
@@ -175,7 +202,7 @@ export function drawGamePhase_gameOver(ctx, gameCanvas) {
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     // 繪製背景
-    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(0, 0, 0 , 1)' }, false);
+    drawRectangle(ctx, 0, 0, gameCanvas.width, gameCanvas.height, { fillColor: 'rgba(0, 0, 0 , 1)' }, false, false);
 
     // 繪製遊戲標題
     drawText(ctx, '遊戲結束囉…', gameCanvas.width / 2, gameCanvas.height * 0.3, STYLES.text.gameOver_Title, false);

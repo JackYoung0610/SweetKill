@@ -1,12 +1,14 @@
 ﻿// SweetKill - main.js
 // 版本號: 0.001
-export const gameVersion = 'v 0.002'
+export const gameVersion = 'v 0.003'
 
 import { gameDisplay } from './js/constants.js';
 import { gameStates, } from './js/gameState.js';
 import { drawGamePhase_mainMenu, drawGamePhase_toolSelection, drawGamePhase_playing, drawGamePhase_gameOver} from './js/drawing.js';
 import { addEventListeners, removeEventListeners } from './js/eventHandlers.js';
 import { getHighScore,  setHighScore, calculateButtonArea } from './js/utils.js';
+
+import animationManager from './js/animationManager.js';
 
 export {  init_central };
 
@@ -27,9 +29,8 @@ function init_central(options = {}) {
  
     const { bInitAll = false, 
                     // 初始化選項
-                    bInitGameCanvas = false, bInitGameStates = false,bInitBackgroud = false , bInitMainCat = false, bInitObjects = false,
-
-                    bRandSelectCat = false 
+                    bInitGameCanvas = false, 
+                    bInitGameStates = false,
 
                 } = options;
 
@@ -56,9 +57,9 @@ function init_gameCanvas() {
     gameDisplay.scaleY = gameCanvas.height / gameDisplay.BASE_HEIGHT;
 
 
-    console.log(`Debug: init_gameCanvas window x = ${window.innerWidth} , y = ${window.innerHeight} :)`);
-    console.log(`Debug: init_gameCanvas gameCanvas x = ${gameCanvas.width} , y = ${gameCanvas.height} :)`);
-    console.log(`Debug: init_gameCanvas x = ${gameDisplay.scaleX} , y = ${gameDisplay.scaleY} :)`);
+    //console.log(`Debug: init_gameCanvas window x = ${window.innerWidth} , y = ${window.innerHeight} :)`);
+    //console.log(`Debug: init_gameCanvas gameCanvas x = ${gameCanvas.width} , y = ${gameCanvas.height} :)`);
+    //console.log(`Debug: init_gameCanvas x = ${gameDisplay.scaleX} , y = ${gameDisplay.scaleY} :)`);
 
 }
 
@@ -81,7 +82,13 @@ function init_gameStates() {
     }
 }
 
-function update() {
+let lastTime = 0;
+function update(timestamp) {
+
+    const deltaTime = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+    animationManager.updateAll(deltaTime); // 更新所有動畫器
+
     // 根據目前的遊戲階段執行不同的邏輯
     switch (gameStates.currentGameState) {
         case 'mainMenu':
@@ -154,7 +161,7 @@ init_central( {bInitAll : true });
 // 設置事件監聽器
 addEventListeners(ctx, gameCanvas);
 
-update();
+update(0);
 
 
 
