@@ -6,7 +6,7 @@ export const SPRITE_SHEET = {
 
     mainMenu :[
         {
-            imageSrc: './assets/spriteSheet/mainMenu/title_001.png', // 你的 Sprite Sheet 圖片路徑
+            imageSrc: 'assets/spriteSheet/mainMenu/title_001.png', // 你的 Sprite Sheet 圖片路徑
             frameWidth: 342,  // 每一幀的寬度（像素）
             frameHeight: 342, // 每一幀的高度（像素）
             framesPerRow: 3,   // 每行有多少幀

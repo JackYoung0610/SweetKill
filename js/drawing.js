@@ -9,16 +9,6 @@ import { SPRITE_SHEET } from './spriteSheet.js';
 import SpriteAnimator from './spriteAnimator.js';
 import animationManager from './animationManager.js';
 
-/*
-const mainMenuTitleAnimator = new SpriteAnimator(
-    SPRITE_SHEET.mainMenu[0].imageSrc,
-    SPRITE_SHEET.mainMenu[0].frameWidth,
-    SPRITE_SHEET.mainMenu[0].frameHeight,
-    SPRITE_SHEET.mainMenu[0].framesPerRow,
-    SPRITE_SHEET.mainMenu[0].animationSpeed,
-    SPRITE_SHEET.mainMenu[0].scale
-);
-*/
 
 /**
  * 繪製文字。
